@@ -1,4 +1,6 @@
-# CSE4430_Web_Services
+# Web Services 
+https://mycourses.aalto.fi/course/info.php?id=13068
+
 A basic implementation of a bank web service using Python 3.5.0 and [bottle](http://bottlepy.org)
 
 ### Usage
