@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://ws.bank.com/" xmlns:tns="http://ws.bank.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="checkCcValidity" type="tns:checkCcValidity"/>
+
+  <xs:element name="checkCcValidityResponse" type="tns:checkCcValidityResponse"/>
+
+  <xs:element name="processPayment" type="tns:processPayment"/>
+
+  <xs:element name="processPaymentResponse" type="tns:processPaymentResponse"/>
+
+  <xs:complexType name="processPayment">
+    <xs:sequence>
+      <xs:element name="arg0" type="tns:creditCard" minOccurs="0"/>
+      <xs:element name="arg1" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="creditCard">
+    <xs:sequence>
+      <xs:element name="ccNumber" type="xs:long"/>
+      <xs:element name="ccv" type="xs:int"/>
+      <xs:element name="expirationDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="ownerFirstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="ownerLastName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="processPaymentResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkCcValidity">
+    <xs:sequence>
+      <xs:element name="arg0" type="tns:creditCard" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="checkCcValidityResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
