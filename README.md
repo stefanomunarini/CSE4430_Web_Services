@@ -1,13 +1,7 @@
 # Web Services 
 https://mycourses.aalto.fi/course/info.php?id=13068
 
-A basic REST implementation of a bank web service using Python 3.5.0 and [bottle](http://bottlepy.org)
-
-### Usage
-
-Create a virtualenv (using `mkvirtualenv` for example) and install the requirements
-
-`pip install -r requirements`
+Basic REST and SOAP implementations of a bank service. The REST web service was implemented with Python 3.5.0 and [bottle](http://bottlepy.org) and the SOAP with Java 8.
 
 ### Endpoints
 
@@ -26,3 +20,30 @@ The flow is as follow:
 <li>The web server receives the request and process the payment.</li>
 <li>The client receive the response and returns the result of the operation.</li>
 </ol>
+
+## REST
+### Usage
+
+Create a virtualenv
+
+`mkvirtualenv rest_ws`
+
+If it is the first time that this environment is created, go to the next step. Otherwise, activate the environment
+
+`workon rest_ws`
+
+Install all the requirements
+
+`pip install -r requirements`
+
+You are now ready to start the webserver
+
+`python ws.py`
+
+and the test client
+
+`python client.py`
+
+By default the number of the credit card used for testing is 16 digits long (required condition for the web service to consider the credit card valid). It is possible to use a different number, in order to test the endpoints, passing it as an argument when starting the client
+
+`python client.py 12345`
