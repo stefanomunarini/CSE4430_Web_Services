@@ -1,3 +1,6 @@
+import random
+
+
 class CreditCard(object):
     cc_number = None
     owner_first_name = None
@@ -17,3 +20,5 @@ class CreditCard(object):
             return True
         return False
 
+    def founds_available(self, amount):
+        return random.choice([True, False])

@@ -1,7 +1,16 @@
+import logging
+
 from bottle import Bottle, run, request, response
 
 from models import CreditCard
 
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('test.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 app = Bottle()
 
@@ -9,9 +18,12 @@ app = Bottle()
 def check_cc_validity():
     cc_payload = request.forms
     cc = CreditCard(**cc_payload)
+    logger.debug('Checking credit card **** **** **** {last_four_digits} validity.'.format(last_four_digits=cc.cc_number[-4:]))
     if cc.is_valid():
+        logger.debug('Valid credit card.')
         response.status=200
         return
+    logger.debug('Invalid credit card.')
     response.status=402
     return
 
@@ -20,7 +32,11 @@ def process_payment():
     payload = request.forms
     amount = payload.pop('amount')
     cc = CreditCard(**payload)
-    response.status = 200
-    return 'Successfully payed {amount}'.format(amount=amount)
+    logger.debug('Processing payment with card **** **** **** {last_four_digits}. Charging {amount}$.'.format(last_four_digits=cc.cc_number[-4:], amount=amount))
+    if(cc.founds_available(amount)):
+        response.status = 200
+        return 'Successfully payed {amount}$ with card **** **** **** {last_four_digits}.'.format(last_four_digits=cc.cc_number[-4:], amount=amount)
+    response.status = 402
+    return('Not enough funds. Please try again with a different credit card!')
 
 run(app, host='localhost', port=8080)
