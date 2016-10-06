@@ -16,9 +16,9 @@ class CreditCard(object):
         self.ccv = ccv
 
     def is_valid(self):
-        if(len(self.cc_number)==16):
+        if (len(self.cc_number)==16):
             return True
         return False
 
-    def founds_available(self, amount):
+    def funds_available(self, amount):
         return random.choice([True, False])
