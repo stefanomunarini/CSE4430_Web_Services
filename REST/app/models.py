@@ -16,7 +16,7 @@ class CreditCard(object):
         self.ccv = ccv
 
     def is_valid(self):
-        if (len(self.cc_number)==16):
+        if len(self.cc_number) == 16:
             return True
         return False
 
