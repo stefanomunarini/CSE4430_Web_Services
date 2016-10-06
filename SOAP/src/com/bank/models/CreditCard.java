@@ -56,4 +56,6 @@ public class CreditCard {
     public boolean isValid(){
         return String.valueOf(this.ccNumber).length() == 16;
     }
+
+    public boolean fundsAvailable(int amount) {return (Math.random() < 0.5); }
 }

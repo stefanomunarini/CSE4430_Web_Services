@@ -17,6 +17,9 @@ public class WebServer implements WebServerInterface{
 
     @Override
     public int processPayment(CreditCard creditCard, int amount) {
-        return 200;
+        if (creditCard.fundsAvailable(amount)){
+            return 200;
+        }
+        return 402;
     }
 }

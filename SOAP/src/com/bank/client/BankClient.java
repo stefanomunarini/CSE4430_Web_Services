@@ -4,6 +4,7 @@ import com.bank.models.CreditCard;
 import com.bank.ws.WebServerInterface;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import java.net.URL;
 
@@ -21,7 +22,19 @@ public class BankClient {
 
         CreditCard cc = new CreditCard();
         cc.setCcNumber(1234567890123456L);
-        System.out.println(wsi.checkCcValidity(cc));
+        int responseStatusCode = wsi.checkCcValidity(cc);
+        if (responseStatusCode==200){
+            System.out.println("Valid credit card.");
+        } else {
+            System.out.println("Invalid credit card.");
+            return;
+        }
+        responseStatusCode = wsi.processPayment(cc, 10);
+        if (responseStatusCode == 200){
+            System.out.println("Payment approved.");
+        } else {
+            System.out.println("Payment denied, not enough fund.");
+        }
     }
 
 }
