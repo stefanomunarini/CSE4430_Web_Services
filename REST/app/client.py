@@ -1,11 +1,8 @@
 import requests, sys
 
-from models import CreditCard
-
 
 def test_bank_service(cc_number, amount):
-    cc = CreditCard(cc_number, 'Stefano', 'Munarini', '12/16', '123')
-    payload = cc.__dict__
+    payload = {'cc_number': cc_number}
     r = requests.post('http://localhost:8080/cc_validity', data=payload)
     if r.status_code != 200:
         return r.text 
