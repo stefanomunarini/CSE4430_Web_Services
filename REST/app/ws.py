@@ -10,8 +10,8 @@ app = Bottle()
 
 @app.route('/cc_validity', method='POST')
 def check_cc_validity():
-    cc_payload = request.forms
-    cc = CreditCard(**cc_payload)
+    payload = request.forms
+    cc = CreditCard(**payload)
     logger.info(
         'Checking credit card **** **** **** {last_four_digits} validity.'.format(last_four_digits=cc.cc_number[-4:]))
     if cc.is_valid():
