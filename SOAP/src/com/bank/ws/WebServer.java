@@ -1,6 +1,7 @@
 package com.bank.ws;
 
-import com.bank.models.CreditCard;
+import com.bank.client.CreditCard;
+import com.bank.services.CreditCardServices;
 
 import javax.jws.WebService;
 
@@ -9,7 +10,7 @@ public class WebServer implements WebServerInterface{
 
     @Override
     public int checkCcValidity(CreditCard creditCard) {
-        if(creditCard.isValid()){
+        if(CreditCardServices.isValid(creditCard)){
             return 200;
         }
         return 402;
@@ -17,7 +18,7 @@ public class WebServer implements WebServerInterface{
 
     @Override
     public int processPayment(CreditCard creditCard, int amount) {
-        if (creditCard.fundsAvailable(amount)){
+        if (CreditCardServices.fundsAvailable(amount)){
             return 200;
         }
         return 402;

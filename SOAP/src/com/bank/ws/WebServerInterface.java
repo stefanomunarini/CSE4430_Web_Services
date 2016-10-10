@@ -1,6 +1,7 @@
+
 package com.bank.ws;
 
-import com.bank.models.CreditCard;
+import com.bank.client.CreditCard;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
