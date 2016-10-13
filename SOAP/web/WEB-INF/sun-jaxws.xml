@@ -2,4 +2,8 @@
 
 <endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
     <endpoint name="WebServer" implementation="com.bank.ws.WebServer" url-pattern="/services/WebServer"/>
+    <endpoint
+            name='BusinessLayer'
+            implementation='com.bank.client.BusinessLayer'
+            url-pattern='/services/BusinessLayer'/>
 </endpoints>

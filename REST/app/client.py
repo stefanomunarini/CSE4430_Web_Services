@@ -1,13 +1,16 @@
 import requests, sys
 
+from settings import BUSINESS_LAYER_ADDRESS
+
 
 def test_bank_service(cc_number, amount):
-    payload = {'cc_number': cc_number}
-    r = requests.post('http://localhost:8080/cc_validity', data=payload)
+    payload = {'cc_number': cc_number, 'endpoint': 'cc_validity'}
+    r = requests.post('http://' + BUSINESS_LAYER_ADDRESS, data=payload)
     if r.status_code != 200:
-        return r.text 
+        return r.text
     payload['amount'] = amount
-    r = requests.post('http://localhost:8080/process_payment', data=payload)
+    payload['endpoint'] = 'process_payment'
+    r = requests.post('http://' + BUSINESS_LAYER_ADDRESS, data=payload)
     return r.text
 
 cc_number = 1234567890123456

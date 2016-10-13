@@ -5,6 +5,8 @@ from bottle import Bottle, run, request, response
 from models import CreditCard
 from logger import logger
 
+from settings import WS_PORT, HOST_ADDRESS
+
 app = Bottle()
 
 
@@ -40,4 +42,4 @@ def process_payment():
     return ('Not enough funds. Please try again with a different credit card!')
 
 
-run(app, host='localhost', port=8080)
+run(app, host=HOST_ADDRESS, port=WS_PORT)
