@@ -1,58 +1,72 @@
 import argparse
 import json
-
 import requests
 
 from logger import logger
-from settings import BUSINESS_LAYER_ADDRESS
+from bs4 import BeautifulSoup
+
 
 ebay_endpoint_url = 'http://svcs.sandbox.ebay.com/services/search/FindingService/v1?' \
-                    'OPERATION-NAME=findItemsByProduct&SERVICE-VERSION=1.0.0&' \
-                    'SECURITY-APPNAME=AaltoUni-ws-SBX-3e6eb0ea5-11d466dd&RESPONSE-DATA-FORMAT=JSON&' \
-                    'SOAP-PAYLOAD&paginationInput.entriesPerPage=5&productId.@type={type}&productId={product_id}'
+                    'SECURITY-APPNAME=AaltoUni-ws-SBX-3e6eb0ea5-11d466dd&' \
+                    'OPERATION-NAME=findItemsByProduct&MESSAGE-PROTOCOL=SOAP12&' \
+                    'paginationInput.entriesPerPage=2'
+
+ebay_soap_envelope = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" ' \
+                     'xmlns="http://www.ebay.com/marketplace/search/v1/services">' \
+                     '<soap:Header/>' \
+                     '<soap:Body>' \
+                     '<findItemsByProductRequest>' \
+                     '<productId type="{type}">{product_id}</productId>' \
+                     '</findItemsByProductRequest>' \
+                     '</soap:Body>' \
+                     '</soap:Envelope>'
 
 
-def get_info(keyword):
+def search_products_by_keyword(keyword):
+    isbn = get_isbn_from_goodreads(keyword)
+    return get_eBay_products_by_isbn(isbn)
+
+
+def get_isbn_from_goodreads(keyword):
     logger.info('Searching goodreads.com for keyword {0}'.format(keyword))
-    # isbn = goodreadserapi.getisbn()
-    results = get_eBay_products_by_isbn('0023805811')
-    if not results:
-        return ['Unable to find any book with \'{}\' keyword. Try using a different keyword'.format(keyword)]
-
-    return results
+    return '0064635481'
 
 
 def get_eBay_products_by_isbn(isbn):
     logger.info('Searching eBay.com for ISBN {0}'.format(isbn))
-    response = requests.get(ebay_endpoint_url.format(type='ISBN', product_id=isbn))
-    data = json.loads(response.text)
     results = []
-
-    for elem in data['findItemsByProductResponse'][0]['searchResult'][0]['item']:
-        result = {'item_id': elem['productId'][0]['__value__'],
-                  'title': elem['title'][0],
-                  'price': elem['sellingStatus'][0]['currentPrice'][0]['__value__'],
-                  'currency': elem['sellingStatus'][0]['currentPrice'][0]['@currencyId']}
+    for item in _get_response_items('ISBN', isbn):
+        result = {'item_id': item.productid.text,
+                  'reference_id': item.itemid.text,
+                  'title': item.title.text,
+                  'price': item.sellingstatus.currentprice.text,
+                  'currency': item.sellingstatus.currentprice.attrs['currencyid']}
         results.append(result)
 
     return results
 
 
-def buy_product(cc_number, item_id):
-    logger.info('Buying item {0} from eBay.com'.format(item_id))
-    product = get_eBay_product_by_item_id(item_id)
-    payload = {'cc_number': cc_number, 'endpoint': 'process_payment',
-               'amount': product['sellingStatus'][0]['currentPrice'][0]['__value__']}
-    r = requests.post('http://' + BUSINESS_LAYER_ADDRESS, data=payload)
-
-    return r.text
-
-
 def get_eBay_product_by_item_id(item_id):
     logger.info('Getting product from eBay.com with item id {0}'.format(item_id))
-    response = requests.get(ebay_endpoint_url.format(type='ReferenceID', product_id=item_id))
-    data = json.loads(response.text)
-    return data['findItemsByProductResponse'][0]['searchResult'][0]['item'][0]
+    try:
+        item = _get_response_items('ReferenceID', item_id)[0]
+    except IndexError:
+        item = []
+    return item
+
+
+def _get_response_items(request_type=None, product_id=None):
+    response = _get_soap_response(_get_soap_envelope(request_type, product_id))
+    xml = BeautifulSoup(response.text)
+    return xml.find_all('item')
+
+
+def _get_soap_envelope(request_type=None, product_id=None):
+    return ebay_soap_envelope.format(type=request_type, product_id=product_id)
+
+
+def _get_soap_response(envelope):
+    return requests.post(ebay_endpoint_url, data=envelope)
 
 
 def create_parser_arguments():

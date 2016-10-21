@@ -12,7 +12,6 @@ app = Bottle()
 @app.route('/cc_validity', method='POST')
 def check_cc_validity():
     payload = request.forms
-    payload.pop('isbn')
     cc = CreditCard(**payload)
     logger.info(
         'Checking credit card **** **** **** {last_four_digits} validity.'.format(last_four_digits=cc['cc_number'][-4:]))
