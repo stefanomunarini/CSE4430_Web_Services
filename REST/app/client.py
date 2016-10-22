@@ -19,7 +19,7 @@ if keyword:
 item_id = arg.buy
 if item_id:
     payload['endpoint'] = 'process_payment'
-    payload['item_id'] = item_id
+    payload['ebay_item_id'] = item_id
 
 if payload.get('endpoint'):
     response = requests.post('http://' + BUSINESS_LAYER_ADDRESS, data=payload)
@@ -27,16 +27,15 @@ if payload.get('endpoint'):
         if response.status_code in (402, 403):
             print(colored(response.text, 'red'))
         else:
-            print(colored(response.text, 'green'))
+            if item_id:
+                print(colored(response.text, 'green'))
+            else:
+                for item in response.json():
+                    print(colored(item, 'green'))
+                    print('\n')
+
     else:
         print(colored('Ops. Something went wrong!', 'red'))
 else:
-    print(colored('You need to provide an option when executing the script. To get the list of available commands'
+    print(colored('You need to provide an option when launching the client. To get the list of available commands'
           'type \'python client.py -h\'.', 'red'))
-
-# args = sys.argv
-# if len(args) > 1:
-#     cc_number = args[1]
-# if len(args) > 2:
-#     amount = args[2]
-# print(test_bank_service(cc_number, amount))

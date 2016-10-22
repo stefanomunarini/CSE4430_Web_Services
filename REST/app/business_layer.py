@@ -5,7 +5,7 @@ import requests
 from pysimplesoap.client import SoapClient
 from bottle import Bottle, run, request, response
 
-from services import search_products_by_keyword, get_eBay_product_by_item_id
+from services import get_eBay_product_by_item_id, get_products_by_keyword
 from settings import WS_ADDRESS, BUSINESS_LAYER_PORT, HOST_ADDRESS
 
 app = Bottle()
@@ -20,9 +20,10 @@ def dispatch():
 
     if endpoint == 'search_product':
         keyword = request_payload.pop('keyword')
-        return json.dumps(search_products_by_keyword(keyword))
+        results = request_payload.get('results', 5)
+        return json.dumps(get_products_by_keyword(keyword, results))
     elif endpoint == 'process_payment':
-        item_id = request_payload['item_id']
+        item_id = request_payload['ebay_item_id']
         product = get_eBay_product_by_item_id(item_id)
         if product:
             request_payload['amount'] = product.sellingstatus.currentprice.text

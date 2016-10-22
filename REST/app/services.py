@@ -1,10 +1,14 @@
 import argparse
-import json
 import requests
 
 from logger import logger
 from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 
+goodreads_search_books_endpoint_url = 'http://www.goodreads.com/search?q={title}&search_type=books&' \
+                                      'key=uv1J3LcJ7zGuhzCXwaCcUQ'
+
+goodreads_find_book_endpoint_url = 'https://www.goodreads.com/book/show.xml?id={id}&key=uv1J3LcJ7zGuhzCXwaCcUQ'
 
 ebay_endpoint_url = 'http://svcs.sandbox.ebay.com/services/search/FindingService/v1?' \
                     'SECURITY-APPNAME=AaltoUni-ws-SBX-3e6eb0ea5-11d466dd&' \
@@ -22,28 +26,11 @@ ebay_soap_envelope = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
                      '</soap:Envelope>'
 
 
-def search_products_by_keyword(keyword):
-    isbn = get_isbn_from_goodreads(keyword)
-    return get_eBay_products_by_isbn(isbn)
-
-
-def get_isbn_from_goodreads(keyword):
-    logger.info('Searching goodreads.com for keyword {0}'.format(keyword))
-    return '0064635481'
-
-
-def get_eBay_products_by_isbn(isbn):
-    logger.info('Searching eBay.com for ISBN {0}'.format(isbn))
-    results = []
-    for item in _get_response_items('ISBN', isbn):
-        result = {'item_id': item.productid.text,
-                  'reference_id': item.itemid.text,
-                  'title': item.title.text,
-                  'price': item.sellingstatus.currentprice.text,
-                  'currency': item.sellingstatus.currentprice.attrs['currencyid']}
-        results.append(result)
-
-    return results
+def get_products_by_keyword(keyword):
+    books = _search_book_from_goodreads(keyword)
+    for book in books:
+        book.update(_get_eBay_product_infos_by_isbn(book.get('isbn', '0064635481')))
+    return books
 
 
 def get_eBay_product_by_item_id(item_id):
@@ -55,9 +42,40 @@ def get_eBay_product_by_item_id(item_id):
     return item
 
 
+def _get_eBay_product_infos_by_isbn(isbn):
+    logger.info('Searching eBay.com for ISBN {0}'.format(isbn))
+    item = _get_response_items('ISBN', isbn)
+    if item:
+        item = item[0]
+        return {'ebay_item_id': item.productid.text,
+                'ebay_reference_id': item.itemid.text,
+                'price': item.sellingstatus.currentprice.text,
+                'currency': item.sellingstatus.currentprice.attrs['currencyid']
+                }
+    return {}
+
+
+def _search_book_from_goodreads(keyword, number_of_results=5):
+    logger.info('Searching goodreads.com for keyword {0}'.format(keyword))
+    response = requests.get(goodreads_search_books_endpoint_url.format(title=keyword))
+    xml = BeautifulSoup(response.text, "html.parser")
+    results = []
+    for book in xml.find_all('work')[:number_of_results]:
+        result = {
+            'goodreads_id': book.id.text,
+            'rating': book.average_rating.text,
+            'title': book.title.text
+        }
+
+        result.update(_get_isbn_from_book_id(book))
+        results.append(result)
+
+    return results
+
+
 def _get_response_items(request_type=None, product_id=None):
     response = _get_soap_response(_get_soap_envelope(request_type, product_id))
-    xml = BeautifulSoup(response.text)
+    xml = BeautifulSoup(response.text, "html.parser")
     return xml.find_all('item')
 
 
@@ -67,6 +85,16 @@ def _get_soap_envelope(request_type=None, product_id=None):
 
 def _get_soap_response(envelope):
     return requests.post(ebay_endpoint_url, data=envelope)
+
+
+def _get_isbn_from_book_id(book):
+    response = requests.get(goodreads_find_book_endpoint_url.format(id=book.id.text))
+    try:
+        root = ET.fromstring(response.text.encode('utf8'))
+    except ET.ParseError:
+        return {}
+    else:
+        return {'isbn': root[1][2].text}
 
 
 def create_parser_arguments():
