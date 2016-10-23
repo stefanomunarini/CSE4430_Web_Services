@@ -19,12 +19,9 @@ You are now ready to start the webserver
 
 and the test client
 
-`python client.py`
+`python client.py -search 'keyword'`
 
-By default the number of the credit card used for testing is 16 digits long (required condition for the web service to consider the credit card valid). It is possible to use a different number, in order to test the endpoints, passing it as an argument when starting the client
+The other client options are:
 
-`python client.py 12345`
-
-You can also customize the amount to be payed, passing a second parameter when starting the client:
-
-`python client.py 1234567890123456 20`
+`-buy 'ebay_item_id'` allows to purchase a particular item, after collecting the id from the search
+`-po 'payment_option[0-1]'` allows to select which of the payment methods available to use (0 default, 1 third party)
