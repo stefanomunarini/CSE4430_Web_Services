@@ -9,7 +9,8 @@ cc_number = 1234567890123456
 arg = services.create_parser_arguments()
 
 
-payload = {'cc_number': cc_number}
+payload = {'cc_number': cc_number,
+           'payment_option': 0}
 
 keyword = arg.search
 if keyword:
@@ -20,6 +21,10 @@ item_id = arg.buy
 if item_id:
     payload['endpoint'] = 'process_payment'
     payload['ebay_item_id'] = item_id
+
+payment_option = arg.po
+if payment_option:
+    payload['payment_option'] = payment_option
 
 if payload.get('endpoint'):
     response = requests.post('http://' + BUSINESS_LAYER_ADDRESS, data=payload)

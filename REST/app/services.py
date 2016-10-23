@@ -101,5 +101,7 @@ def create_parser_arguments():
     parser = argparse.ArgumentParser(description='Search and buy books from eBay.')
     parser.add_argument('-search', metavar='keyword', help='keyword to use for the search')
     parser.add_argument('-buy', metavar='isbn', help='isbn of the product to buy')
+    parser.add_argument('-po', metavar='payment_option',
+                        help='choose a different payment method (0 default / 1 third party')
 
     return parser.parse_args()
