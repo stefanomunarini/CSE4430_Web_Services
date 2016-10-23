@@ -15,18 +15,11 @@ In the practical assignment, the following high-level functionality is to be imp
 <li>After a successful payment, the shop acknowledges the order as successful</li>
 </ul>
 
-### Development Progress
-
-At the moment, only the REST and the SOAP bank web services, that provide functionalities to process the payment, have been implemented. In addition, a client for testing purposes has been implemented.
-
 ### Technologies
 
 The REST web service was implemented with Python 3.5.0 and [bottle](http://bottlepy.org) while the SOAP with Java7.
 
-### Endpoints
 
-The API endpoints of the web services are:
-<ul>
-<li><i>check_cc_validity</i> responsible for verifying the validity of a credit card (mock)</li>
-<li><i>process_payment</i> responsible for processing the payment (mock)</li>
-</ul>
+### Limitations
+
+Due to the use of the ebay sandbox, many search results won't have any price and ebay_item_id. This is because the ebay sandbox database is very little populated, therefore lot of information are missing.
