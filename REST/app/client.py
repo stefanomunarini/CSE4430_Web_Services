@@ -1,3 +1,5 @@
+import os
+
 import requests
 
 from termcolor import colored
@@ -42,5 +44,4 @@ if payload.get('endpoint'):
     else:
         print(colored('Ops. Something went wrong!', 'red'))
 else:
-    print(colored('You need to provide an option when launching the client. To get the list of available commands'
-          'type \'python client.py -h\'.', 'red'))
+    os.system('python client.py -h')
