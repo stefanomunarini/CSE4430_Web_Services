@@ -1,30 +1,34 @@
+import argparse
 import os
-
 import requests
 
 from termcolor import colored
 
-import services
 from settings import BUSINESS_LAYER_ADDRESS
 
 cc_number = 1234567890123456
-arg = services.create_parser_arguments()
 
+parser = argparse.ArgumentParser(description='Search and buy books from eBay.')
+parser.add_argument('-search', metavar='[keyword]', help='keyword to use for the search')
+parser.add_argument('-buy', metavar='[isbn]', help='isbn of the product to buy')
+parser.add_argument('-po', metavar='[0-1]{1}', type=int,
+                    help='choose a different payment method (0 default / 1 third party')
+args = parser.parse_args()
 
 payload = {'cc_number': cc_number,
            'payment_option': 0}
 
-keyword = arg.search
+keyword = args.search
 if keyword:
     payload['endpoint'] = 'search_product'
     payload['keyword'] = keyword
 
-item_id = arg.buy
+item_id = args.buy
 if item_id:
     payload['endpoint'] = 'process_payment'
     payload['ebay_item_id'] = item_id
 
-payment_option = arg.po
+payment_option = args.po
 if payment_option:
     payload['payment_option'] = payment_option
 

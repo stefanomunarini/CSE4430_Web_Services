@@ -3,8 +3,9 @@ import requests
 
 from bottle import Bottle, run, request, response
 
-from services import get_eBay_product_by_item_id, get_products_by_keyword
+from services import get_ebay_product_by_item_id, get_products_by_keyword
 from settings import WS_ADDRESS, BUSINESS_LAYER_PORT, HOST_ADDRESS
+
 
 app = Bottle()
 
@@ -31,7 +32,7 @@ def dispatch():
         return json.dumps(get_products_by_keyword(keyword))
     elif endpoint == 'process_payment':
         item_id = request_payload['ebay_item_id']
-        product = get_eBay_product_by_item_id(item_id)
+        product = get_ebay_product_by_item_id(item_id)
         if product:
             price = product.sellingstatus.currentprice.text
             if request_payload.get('payment_option') == '1':

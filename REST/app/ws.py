@@ -30,14 +30,14 @@ def process_payment():
     payload = request.forms
     amount = payload.pop('amount')
     cc = CreditCard(**payload)
-    logger.info('Processing payment with card **** **** **** {last_four_digits}. Trying to charge {amount}$.'.format(
+    logger.info('Processing payment with card **** **** **** {last_four_digits}. Charging {amount}$.'.format(
         last_four_digits=cc['cc_number'][-4:], amount=amount))
     if cc.funds_available(amount):
         logger.info('Payment approved.')
         response.status = http.client.OK
         return 'Successfully payed {amount}$ with card **** **** **** {last_four_digits}.'.format(
             last_four_digits=cc['cc_number'][-4:], amount=amount)
-    logger.info('Payment denied. Not enough money.')
+    logger.error('Payment denied. Not enough money.')
     response.status = http.client.PAYMENT_REQUIRED
 
     return 'Not enough funds. Please try again with a different credit card!'
