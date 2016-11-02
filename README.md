@@ -1,6 +1,9 @@
-# Bank Web Service 
+# Online Book Shop
 https://mycourses.aalto.fi/course/info.php?id=13068
 
+This accademic project aim at providing a platform in where users can search for books, get their information and reviews (through Goodreads APIs), get their prices (through eBay APIs) and finally select and buy some of them.
+
+### Project Requirements 
 
 The practical assignment for the course is to plan and implement a programmatic book seller web service that hooks into web services provided by eBay and Goodreads. Product information and user ratings for the books are sourced through the REST API of Goodreads, while product offers are fetched from eBay. Payment is handled by "third party” bank web services, in reality also developed as part of the exercise. Finally, to test the book seller web service, a front-end client is created.
 
@@ -15,10 +18,19 @@ In the practical assignment, the following high-level functionality is to be imp
 <li>After a successful payment, the shop acknowledges the order as successful</li>
 </ul>
 
+### Architecture
+
+The project is a mix of REST and SOAP web services.
+
+A REST web service is responsible for the business logic of the app. Every requests sent to this web server (`/REST/app/business_layer.py`) is forwarded to the appropriate web service (eBay, Goodreads or Bank). The Bank Web Service  has been implemented both as a REST WS `/REST/app/ws.py` and as a SOAP WS `/SOAP/src/com/bank/ws/WebServer.java`.
+
 ### Technologies
 
 The REST web service was implemented with Python 3.5.0 and [bottle](http://bottlepy.org) while the SOAP with Java7.
 
+### Testing
+
+For information about how to test the project please refer to [this](https://github.com/stefanomunarini/CSE4430_Web_Services/blob/master/REST/README.md) README.
 
 ### Limitations
 
