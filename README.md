@@ -1,4 +1,4 @@
-# Online Book Shop
+# Book Shop
 https://mycourses.aalto.fi/course/info.php?id=13068
 
 This accademic project aim at providing a platform in where users can search for books, get their information and reviews (through Goodreads APIs), get their prices (through eBay APIs) and finally select and buy some of them.
